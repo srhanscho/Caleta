@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-type Step = 'email' | 'login' | 'register'
+type Step = 'email' | 'login' | 'register' | 'confirm'
 
 const emailSchema = z.object({
   email: z.string().email('Ingresa un correo válido'),
@@ -54,9 +54,18 @@ export function AuthForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
-  const emailForm = useForm<EmailValues>({ resolver: zodResolver(emailSchema) })
-  const loginForm = useForm<LoginValues>({ resolver: zodResolver(loginSchema) })
-  const registerForm = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) })
+  const emailForm = useForm<EmailValues>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: { email: '' },
+  })
+  const loginForm = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  })
+  const registerForm = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { email: '', nombre: '', password: '' },
+  })
 
   const currentEmail =
     step === 'email'
@@ -100,7 +109,7 @@ export function AuthForm() {
     setIsLoading(true)
     setServerError(null)
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: nombre } },
@@ -110,13 +119,19 @@ export function AuthForm() {
       setIsLoading(false)
       return
     }
-    router.push('/dashboard')
+    if (data.session) {
+      router.push('/dashboard')
+    } else {
+      setStep('confirm')
+      setIsLoading(false)
+    }
   }
 
   const subtitle: Record<Step, string> = {
     email: 'Tus finanzas, tu control',
     login: 'Bienvenido de vuelta',
     register: 'Crea tu cuenta',
+    confirm: 'Revisa tu correo',
   }
 
   const animationClass =
@@ -310,6 +325,27 @@ export function AuthForm() {
             </Button>
           </form>
         </Form>
+      )}
+
+      {/* Step: confirm email */}
+      {step === 'confirm' && (
+        <div className={`space-y-4 text-center ${animationClass}`}>
+          <div className="rounded-xl border border-[#27272A] bg-[#18181B] p-6 space-y-3">
+            <p className="text-[#FAFAFA] text-sm">
+              Te enviamos un correo de confirmación. Revisá tu bandeja de entrada y hace clic en el enlace para activar tu cuenta.
+            </p>
+            <p className="text-[#A1A1AA] text-xs">
+              ¿No llegó? Revisá la carpeta de spam.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleResetEmail}
+            className="text-xs text-[#0D9488] hover:underline cursor-pointer"
+          >
+            Volver al inicio
+          </button>
+        </div>
       )}
     </div>
   )
