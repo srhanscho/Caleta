@@ -2,4 +2,6 @@
   sharp: true
   unrs-resolver: true
   msw: true
+  prisma: true
+  '@prisma/engines': true
 

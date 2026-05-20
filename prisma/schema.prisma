@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum AccountType {
+  NEQUI
+  DAVIPLATA
+  BANCOLOMBIA
+  NUBANK
+  EFECTIVO
+  OTRO
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+// Mirrors auth.users from Supabase — extended profile
+model User {
+  id         String   @id @default(cuid())
+  supabaseId String   @unique
+  email      String   @unique
+  name       String?
+  avatarUrl  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  accounts     Account[]
+  categories   Category[]
+  transactions Transaction[]
+  caletas      Caleta[]
+  insights     Insight[]
+}
+
+// Cuentas/billeteras del usuario
+model Account {
+  id        String      @id @default(cuid())
+  userId    String
+  nombre    String
+  tipo      AccountType
+  balance   Int         @default(0) // en centavos COP
+  color     String      @default("#0F766E")
+  icono     String      @default("wallet")
+  activa    Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+// Categorías: algunas son del sistema (userId null), otras del usuario
+model Category {
+  id        String       @id @default(cuid())
+  nombre    String
+  icono     String
+  color     String
+  tipo      CategoryType
+  userId    String? // null = predefinida del sistema
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([nombre, userId])
+  @@index([userId])
+}
+
+// Transacción individual — unidad básica del sistema
+model Transaction {
+  id              String          @id @default(cuid())
+  userId          String
+  accountId       String
+  categoryId      String
+  monto           Int // en centavos COP
+  tipo            TransactionType
+  fecha           DateTime
+  descripcion     String?
+  sourceImageUrl  String? // URL en Supabase Storage si vino de screenshot
+  confidenceScore Float? // 0.0–1.0 confianza del IA en la extracción
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account        Account         @relation(fields: [accountId], references: [id])
+  category       Category        @relation(fields: [categoryId], references: [id])
+  caletaDeposits CaletaDeposit[]
+
+  @@index([userId])
+  @@index([fecha])
+  @@index([accountId])
+  @@index([categoryId])
+}
+
+// Meta de ahorro del usuario
+model Caleta {
+  id            String    @id @default(cuid())
+  userId        String
+  nombre        String
+  montoObjetivo Int // en centavos COP
+  montoActual   Int       @default(0) // en centavos COP
+  fechaObjetivo DateTime?
+  descripcion   String?
+  completada    Boolean   @default(false)
+  color         String    @default("#0F766E")
+  icono         String    @default("piggy-bank")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deposits CaletaDeposit[]
+
+  @@index([userId])
+}
+
+// Aportes individuales a una caleta — historial de depósitos
+model CaletaDeposit {
+  id            String   @id @default(cuid())
+  caletaId      String
+  monto         Int // en centavos COP
+  nota          String?
+  transactionId String? // opcional: vinculado a una Transaction
+  createdAt     DateTime @default(now())
+
+  caleta      Caleta       @relation(fields: [caletaId], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([caletaId])
+}
+
+// Análisis mensual generado por IA
+model Insight {
+  id              String   @id @default(cuid())
+  userId          String
+  mes             Int // 1–12
+  anio            Int
+  resumen         String
+  alertas         Json     @default("[]")
+  recomendaciones Json     @default("[]")
+  generadoEn      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mes, anio])
+  @@index([userId])
+}
