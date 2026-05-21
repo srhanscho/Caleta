@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${ibmPlexSans.variable} h-full antialiased`}>
+    <html lang="es" className={`${ibmPlexSans.variable} dark h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ibm-plex-sans)]">
         {children}
       </body>
