@@ -17,20 +17,30 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  // Upsert ensures the Prisma user exists even if the webhook failed
-  const prismaUser = await prisma.user.upsert({
-    where: { supabaseId: user.id },
-    create: {
-      supabaseId: user.id,
-      email: user.email!,
-      name:
-        (user.user_metadata?.full_name as string | undefined) ??
-        (user.user_metadata?.name as string | undefined) ??
-        null,
-    },
-    update: {},
-    include: { accounts: { where: { activa: true } } },
-  })
+  // Upsert ensures the Prisma user exists even if the webhook failed.
+  // Falls back to update-by-email when the same email exists under a different auth provider.
+  let prismaUser
+  try {
+    prismaUser = await prisma.user.upsert({
+      where: { supabaseId: user.id },
+      create: {
+        supabaseId: user.id,
+        email: user.email!,
+        name:
+          (user.user_metadata?.full_name as string | undefined) ??
+          (user.user_metadata?.name as string | undefined) ??
+          null,
+      },
+      update: {},
+      include: { accounts: { where: { activa: true } } },
+    })
+  } catch {
+    prismaUser = await prisma.user.update({
+      where: { email: user.email! },
+      data: { supabaseId: user.id },
+      include: { accounts: { where: { activa: true } } },
+    })
+  }
 
   if (prismaUser.accounts.length === 0) {
     redirect('/onboarding')
