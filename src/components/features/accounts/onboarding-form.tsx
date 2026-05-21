@@ -83,21 +83,24 @@ export function OnboardingForm() {
     setIsLoading(true)
     setError(null)
 
-    const accounts = rows.map((r) => ({
-      tipo: r.tipo,
-      nombre: r.nombre.trim() || (ACCOUNT_TYPES.find((t) => t.value === r.tipo)?.defaultName ?? r.tipo),
-      balance: parseInt(r.balance) || 0,
-    }))
+    try {
+      const accounts = rows.map((r) => ({
+        tipo: r.tipo,
+        nombre: r.nombre.trim() || (ACCOUNT_TYPES.find((t) => t.value === r.tipo)?.defaultName ?? r.tipo),
+        balance: Math.round(Number(r.balance)) || 0,
+      }))
 
-    const result = await createAccounts(accounts)
+      const result = await createAccounts(accounts)
 
-    if (!result.success) {
-      setError(result.error)
+      if (!result.success) {
+        setError(result.error)
+        return
+      }
+
+      router.push('/dashboard')
+    } finally {
       setIsLoading(false)
-      return
     }
-
-    router.push('/dashboard')
   }
 
   function handleSkip() {
@@ -135,6 +138,7 @@ export function OnboardingForm() {
                 placeholder="$ Balance"
                 type="number"
                 min="0"
+                step="1"
                 disabled={isLoading}
                 className={`${inputClass} w-32 shrink-0`}
               />
