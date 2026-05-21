@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { createHmac, timingSafeEqual } from 'crypto'
 import { NextResponse, type NextRequest } from 'next/server'
 
 type WebhookRecord = {
@@ -14,23 +13,16 @@ type WebhookPayload = {
   record: WebhookRecord
 }
 
-function verifySignature(body: string, signature: string, secret: string): boolean {
-  const hmac = createHmac('sha256', secret).update(body).digest('hex')
-  const expected = Buffer.from(`sha256=${hmac}`)
-  const received = Buffer.from(signature)
-  if (expected.length !== received.length) return false
-  return timingSafeEqual(expected, received)
-}
-
 export async function POST(request: NextRequest) {
-  const body = await request.text()
-  const signature = request.headers.get('x-supabase-signature') ?? ''
-  const secret = process.env.SUPABASE_WEBHOOK_SECRET ?? ''
-
-  if (!verifySignature(body, signature, secret)) {
-    return NextResponse.json({ error: 'Firma inválida' }, { status: 401 })
+  const secret = process.env.SUPABASE_WEBHOOK_SECRET
+  if (secret) {
+    const token = request.nextUrl.searchParams.get('token')
+    if (token !== secret) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
   }
 
+  const body = await request.text()
   const payload: WebhookPayload = JSON.parse(body)
 
   if (payload.type !== 'INSERT' || payload.table !== 'users') {
