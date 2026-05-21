@@ -25,7 +25,7 @@ export default async function DashboardLayout({
       where: { supabaseId: user.id },
       create: {
         supabaseId: user.id,
-        email: user.email!,
+        email: user.email ?? `${user.id}@unknown.local`,
         name:
           (user.user_metadata?.full_name as string | undefined) ??
           (user.user_metadata?.name as string | undefined) ??
@@ -34,12 +34,18 @@ export default async function DashboardLayout({
       update: {},
       include: { accounts: { where: { activa: true } } },
     })
-  } catch {
-    prismaUser = await prisma.user.update({
-      where: { email: user.email! },
-      data: { supabaseId: user.id },
-      include: { accounts: { where: { activa: true } } },
-    })
+  } catch (e) {
+    console.error('[dashboard/layout] upsert failed:', e, { userId: user.id, email: user.email })
+    try {
+      prismaUser = await prisma.user.update({
+        where: { email: user.email! },
+        data: { supabaseId: user.id },
+        include: { accounts: { where: { activa: true } } },
+      })
+    } catch (e2) {
+      console.error('[dashboard/layout] update-by-email failed:', e2)
+      redirect('/login')
+    }
   }
 
   if (prismaUser.accounts.length === 0) {
