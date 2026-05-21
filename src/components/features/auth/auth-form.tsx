@@ -77,10 +77,14 @@ export function AuthForm() {
   async function handleEmailSubmit({ email }: EmailValues) {
     setIsLoading(true)
     setServerError(null)
-    const { exists } = await checkEmail(email)
-    loginForm.setValue('email', email)
-    registerForm.setValue('email', email)
-    setStep(exists ? 'login' : 'register')
+    try {
+      const { exists } = await checkEmail(email)
+      loginForm.setValue('email', email)
+      registerForm.setValue('email', email)
+      setStep(exists ? 'login' : 'register')
+    } catch {
+      setServerError('Error de conexión. Intenta de nuevo.')
+    }
     setIsLoading(false)
   }
 
@@ -173,6 +177,7 @@ export function AuthForm() {
                 </FormItem>
               )}
             />
+            {serverError && <p className="text-sm text-red-400">{serverError}</p>}
             <Button
               type="submit"
               disabled={isLoading}
