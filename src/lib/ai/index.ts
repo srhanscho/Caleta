@@ -1,9 +1,7 @@
-import { createAnthropic } from '@ai-sdk/anthropic'
+import { createGoogleGenerativeAI } from '@ai-sdk/google'
 
-// Shared Anthropic provider instance — features import from here
-export const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+export const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 })
 
-// Default model for all AI features
-export const DEFAULT_MODEL = 'claude-sonnet-4-6'
+export const DEFAULT_MODEL = 'gemini-2.0-flash'

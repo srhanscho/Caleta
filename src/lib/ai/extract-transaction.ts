@@ -1,6 +1,6 @@
 import { generateObject } from 'ai'
 import { z } from 'zod'
-import { anthropic, DEFAULT_MODEL } from '@/lib/ai/index'
+import { google, DEFAULT_MODEL } from '@/lib/ai/index'
 
 const ExtractionSchema = z.object({
   legible: z.boolean(),
@@ -35,7 +35,7 @@ Reglas:
 - confidenceScore: certeza de la extracción de 0.0 a 1.0`
 
   const { object } = await generateObject({
-    model: anthropic(DEFAULT_MODEL),
+    model: google(DEFAULT_MODEL),
     schema: ExtractionSchema,
     messages: [
       {

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.78",
+    "@ai-sdk/google": "^3.0.78",
     "@anthropic-ai/sdk": "^0.96.0",
     "@base-ui/react": "^1.4.1",
     "@ducanh2912/next-pwa": "^10.2.9",
