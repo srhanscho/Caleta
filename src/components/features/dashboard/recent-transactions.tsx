@@ -1,9 +1,9 @@
-import type { Transaction, Category, Account } from '@/generated/prisma'
+import type { TransactionModel, CategoryModel, AccountModel } from '@/generated/prisma'
 import { formatCOP, formatRelativeDate } from '@/lib/format'
 
-type TransactionWithRefs = Transaction & {
-  category: Category
-  account: Account
+type TransactionWithRefs = TransactionModel & {
+  category: CategoryModel
+  account: AccountModel
 }
 
 type Props = {

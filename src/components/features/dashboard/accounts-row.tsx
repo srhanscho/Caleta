@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { Account } from '@/generated/prisma'
+import type { AccountModel } from '@/generated/prisma'
 import { formatCOP } from '@/lib/format'
 
 const typeLabel: Record<string, string> = {
@@ -11,7 +11,7 @@ const typeLabel: Record<string, string> = {
 }
 
 type Props = {
-  accounts: Account[]
+  accounts: AccountModel[]
 }
 
 export function AccountsRow({ accounts }: Props) {

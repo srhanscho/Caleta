@@ -43,8 +43,8 @@ export function SpendingChart({ data, monthLabel }: Props) {
               fontSize: '12px',
               color: 'oklch(0.95 0.01 265)',
             }}
-            formatter={(value: number) => [formatCOP(value), 'Gastos']}
-            labelFormatter={(label: number) => `Día ${label}`}
+            formatter={(value) => [formatCOP(Number(value)), 'Gastos']}
+            labelFormatter={(label) => `Día ${label}`}
           />
           <Area
             type="monotone"
