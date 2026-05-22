@@ -43,9 +43,9 @@ type LoginValues = z.infer<typeof loginSchema>
 type RegisterValues = z.infer<typeof registerSchema>
 
 const inputClass =
-  'bg-[#18181B] border-[#27272A] text-[#FAFAFA] placeholder:text-[#A1A1AA] focus-visible:ring-[#0D9488]'
+  'bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring'
 
-const labelClass = 'text-[#FAFAFA]'
+const labelClass = 'text-foreground'
 
 export function AuthForm() {
   const router = useRouter()
@@ -146,10 +146,10 @@ export function AuthForm() {
       {/* Header */}
       <div className="space-y-2 text-center">
         <div className="flex items-center justify-center gap-2">
-          <Lock className="w-5 h-5 text-[#0D9488]" aria-hidden="true" />
-          <h1 className="text-2xl font-semibold text-[#FAFAFA]">Caleta</h1>
+          <Lock className="w-5 h-5 text-primary" aria-hidden="true" />
+          <h1 className="text-2xl font-semibold text-foreground">Caleta</h1>
         </div>
-        <p className="text-sm text-[#A1A1AA]">{subtitle[step]}</p>
+        <p className="text-sm text-muted-foreground">{subtitle[step]}</p>
       </div>
 
       {/* Step: email */}
@@ -181,7 +181,7 @@ export function AuthForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#0D9488] hover:bg-[#0F766E] text-white cursor-pointer"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continuar'}
             </Button>
@@ -197,11 +197,11 @@ export function AuthForm() {
             className={`space-y-4 ${animationClass}`}
           >
             <div className="flex items-center justify-between">
-              <p className="text-sm text-[#FAFAFA] truncate">{currentEmail}</p>
+              <p className="text-sm text-foreground truncate">{currentEmail}</p>
               <button
                 type="button"
                 onClick={handleResetEmail}
-                className="text-xs text-[#0D9488] hover:underline cursor-pointer ml-2 shrink-0"
+                className="text-xs text-primary hover:underline cursor-pointer ml-2 shrink-0"
               >
                 Cambiar
               </button>
@@ -224,7 +224,7 @@ export function AuthForm() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#FAFAFA] cursor-pointer"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                         aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                       >
                         {showPassword ? (
@@ -243,7 +243,7 @@ export function AuthForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#0D9488] hover:bg-[#0F766E] text-white cursor-pointer"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Iniciar sesión'}
             </Button>
@@ -259,11 +259,11 @@ export function AuthForm() {
             className={`space-y-4 ${animationClass}`}
           >
             <div className="flex items-center justify-between">
-              <p className="text-sm text-[#FAFAFA] truncate">{currentEmail}</p>
+              <p className="text-sm text-foreground truncate">{currentEmail}</p>
               <button
                 type="button"
                 onClick={handleResetEmail}
-                className="text-xs text-[#0D9488] hover:underline cursor-pointer ml-2 shrink-0"
+                className="text-xs text-primary hover:underline cursor-pointer ml-2 shrink-0"
               >
                 Cambiar
               </button>
@@ -305,7 +305,7 @@ export function AuthForm() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#FAFAFA] cursor-pointer"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                         aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                       >
                         {showPassword ? (
@@ -324,7 +324,7 @@ export function AuthForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#0D9488] hover:bg-[#0F766E] text-white cursor-pointer"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Crear cuenta'}
             </Button>
@@ -335,18 +335,18 @@ export function AuthForm() {
       {/* Step: confirm email */}
       {step === 'confirm' && (
         <div className={`space-y-4 text-center ${animationClass}`}>
-          <div className="rounded-xl border border-[#27272A] bg-[#18181B] p-6 space-y-3">
-            <p className="text-[#FAFAFA] text-sm">
+          <div className="rounded-xl border border-border bg-card p-6 space-y-3">
+            <p className="text-foreground text-sm">
               Te enviamos un correo de confirmación. Revisá tu bandeja de entrada y hace clic en el enlace para activar tu cuenta.
             </p>
-            <p className="text-[#A1A1AA] text-xs">
+            <p className="text-muted-foreground text-xs">
               ¿No llegó? Revisá la carpeta de spam.
             </p>
           </div>
           <button
             type="button"
             onClick={handleResetEmail}
-            className="text-xs text-[#0D9488] hover:underline cursor-pointer"
+            className="text-xs text-primary hover:underline cursor-pointer"
           >
             Volver al inicio
           </button>

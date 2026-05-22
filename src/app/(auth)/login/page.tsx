@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { AuthForm } from '@/components/features/auth/auth-form'
 import { GoogleButton } from '@/components/features/auth/google-button'
@@ -15,20 +16,25 @@ export default async function LoginPage() {
   if (user) redirect('/dashboard')
 
   return (
-    <div className="rounded-2xl border border-[#27272A] bg-[#18181B] p-8 shadow-2xl space-y-6">
-      <AuthForm />
-      <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-[#27272A]" />
-        <span className="text-xs text-[#A1A1AA]">o</span>
-        <div className="h-px flex-1 bg-[#27272A]" />
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <Image src="/logo.png" alt="Caleta" width={140} height={48} priority />
       </div>
-      <GoogleButton />
-      <p className="text-center text-xs text-[#A1A1AA]">
-        Al continuar aceptas nuestra{' '}
-        <a href="/privacidad" className="underline hover:text-[#FAFAFA]">
-          política de privacidad
-        </a>
-      </p>
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-2xl space-y-6">
+        <AuthForm />
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">o</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+        <GoogleButton />
+        <p className="text-center text-xs text-muted-foreground">
+          Al continuar aceptas nuestra{' '}
+          <a href="/privacidad" className="underline hover:text-foreground">
+            política de privacidad
+          </a>
+        </p>
+      </div>
     </div>
   )
 }

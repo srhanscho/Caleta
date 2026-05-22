@@ -18,7 +18,7 @@ export function GoogleButton() {
     <Button
       type="button"
       variant="outline"
-      className="w-full border-[#27272A] bg-transparent text-[#FAFAFA] hover:bg-[#27272A] hover:text-[#FAFAFA] cursor-pointer transition-colors duration-200"
+      className="w-full border-border bg-transparent text-foreground hover:bg-secondary hover:text-foreground cursor-pointer transition-colors duration-200"
       onClick={handleGoogleLogin}
     >
       <svg
