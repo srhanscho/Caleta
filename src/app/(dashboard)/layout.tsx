@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
+import { BottomNav } from '@/components/layout/bottom-nav'
 
 export default async function DashboardLayout({
   children,
@@ -50,5 +51,10 @@ export default async function DashboardLayout({
     redirect('/onboarding')
   }
 
-  return <div className="min-h-screen bg-background">{children}</div>
+  return (
+    <div className="min-h-screen bg-background">
+      {children}
+      <BottomNav />
+    </div>
+  )
 }
