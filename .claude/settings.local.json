@@ -1,7 +1,26 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(New-Item *)"
+      "PowerShell(New-Item *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(pnpm add *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\hsdea\\\\Documents\\\\practica\\\\ai-practice-app\\\\Caleta\\\\node_modules\\\\@hookform\\\\resolvers\\\\zod\" | ForEach-Object { $_.Name })",
+      "PowerShell(Get-Content \"C:\\\\Users\\\\hsdea\\\\Documents\\\\practica\\\\ai-practice-app\\\\Caleta\\\\node_modules\\\\@hookform\\\\resolvers\\\\zod\\\\src\\\\zod.ts\" | Select-String \"minor\" | ForEach-Object { $_.Line })",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\hsdea\\\\Documents\\\\practica\\\\ai-practice-app\\\\Caleta\\\\node_modules\\\\@hookform\\\\resolvers\\\\zod\\\\dist\" | ForEach-Object { $_.Name })",
+      "Bash(pnpm exec *)",
+      "Bash(pnpm build *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(git commit -m 'feat: add temporary logout button to dashboard placeholder *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\hsdea\\\\Documents\\\\practica\\\\ai-practice-app\\\\Caleta\\\\src\\\\server\\\\actions\" -ErrorAction SilentlyContinue)",
+      "Bash(ConvertTo-Json)",
+      "Bash(git commit *)",
+      "Bash(pnpm tsc *)",
+      "Bash(git push *)",
+      "Bash(vercel logs *)",
+      "Bash(npx vercel *)",
+      "Bash(python skills/ui-ux-pro-max/scripts/search.py \"personal finance dashboard fintech dark mode young colombian\" --design-system -p \"Caleta\")",
+      "Bash(python *)"
     ]
   }
 }
