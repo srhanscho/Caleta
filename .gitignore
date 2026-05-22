@@ -51,3 +51,5 @@ next-env.d.ts
 /public/swe-worker-*.js.map
 
 # src/generated/prisma is committed so Vercel has the client without needing prisma generate at build time
+
+.vercel

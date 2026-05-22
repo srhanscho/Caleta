@@ -34,16 +34,14 @@ export default async function DashboardLayout({
       update: {},
       include: { accounts: { where: { activa: true } } },
     })
-  } catch (e) {
-    console.error('[dashboard/layout] upsert failed:', e, { userId: user.id, email: user.email })
+  } catch {
     try {
       prismaUser = await prisma.user.update({
         where: { email: user.email! },
         data: { supabaseId: user.id },
         include: { accounts: { where: { activa: true } } },
       })
-    } catch (e2) {
-      console.error('[dashboard/layout] update-by-email failed:', e2)
+    } catch {
       redirect('/login')
     }
   }

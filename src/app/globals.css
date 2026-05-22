@@ -2,36 +2,13 @@
 @import "tw-animate-css";
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.13 0.02 256);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.02 256);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.02 256);
-  /* #0F766E — verde caleta */
-  --primary: oklch(0.44 0.11 182);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.94 0.03 182);
-  --secondary-foreground: oklch(0.44 0.11 182);
-  --muted: oklch(0.95 0.01 256);
-  --muted-foreground: oklch(0.55 0.02 256);
-  --accent: oklch(0.94 0.03 182);
-  --accent-foreground: oklch(0.44 0.11 182);
-  --destructive: oklch(0.58 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.88 0.01 256);
-  --input: oklch(0.88 0.01 256);
-  --ring: oklch(0.44 0.11 182);
-  --radius: 0.75rem;
-}
-
-.dark {
   --background: oklch(0.13 0.02 256);
   --foreground: oklch(0.95 0.01 256);
   --card: oklch(0.13 0.02 256);
   --card-foreground: oklch(0.95 0.01 256);
   --popover: oklch(0.13 0.02 256);
   --popover-foreground: oklch(0.95 0.01 256);
+  /* #0F766E — verde caleta */
   --primary: oklch(0.65 0.12 182);
   --primary-foreground: oklch(0.13 0.02 256);
   --secondary: oklch(0.22 0.03 182);
@@ -45,6 +22,7 @@
   --border: oklch(0.25 0.02 256);
   --input: oklch(0.25 0.02 256);
   --ring: oklch(0.65 0.12 182);
+  --radius: 0.75rem;
 }
 
 @theme inline {
