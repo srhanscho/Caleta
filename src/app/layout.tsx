@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="es" className={`${ibmPlexSans.variable} dark h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ibm-plex-sans)]">
         {children}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   )
