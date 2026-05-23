@@ -1,5 +1,6 @@
 import type { TransactionModel, CategoryModel, AccountModel } from '@/generated/prisma'
 import { formatCOP, formatRelativeDate } from '@/lib/format'
+import { CategoryIcon } from '@/components/features/transactions/category-icon'
 
 type TransactionWithRefs = TransactionModel & {
   category: CategoryModel
@@ -35,10 +36,10 @@ export function RecentTransactions({ transactions }: Props) {
             <li key={tx.id} className="flex items-center gap-3">
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm"
-                style={{ background: tx.category.color + '26' }}
+                style={{ background: tx.category.color + '26', color: tx.category.color }}
                 aria-hidden="true"
               >
-                {tx.category.icono}
+                <CategoryIcon name={tx.category.icono} />
               </span>
               <div className="flex flex-1 flex-col min-w-0">
                 <span className="text-sm text-foreground truncate">

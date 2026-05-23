@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { TransactionDrawer, type TransactionWithRefs } from './transaction-drawer'
+import { CategoryIcon } from './category-icon'
 
 type AccountOption = { id: string; nombre: string; tipo: string; color: string }
 type CategoryOption = { id: string; nombre: string; tipo: string }
@@ -66,10 +67,10 @@ export function TransactionList({ transactions, accounts, categories }: Props) {
                 >
                   <span
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm"
-                    style={{ background: tx.category.color + '26' }}
+                    style={{ background: tx.category.color + '26', color: tx.category.color }}
                     aria-hidden="true"
                   >
-                    {tx.category.icono}
+                    <CategoryIcon name={tx.category.icono} />
                   </span>
                   <div className="flex flex-1 flex-col min-w-0">
                     <span className="text-sm text-foreground truncate">
