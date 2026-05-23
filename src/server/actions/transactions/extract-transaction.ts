@@ -107,11 +107,27 @@ export async function deleteTransaction(id: string): Promise<ActionResult<void>>
   if (!prismaUser) return { success: false, error: 'Usuario no encontrado' }
 
   try {
-    await prisma.transaction.delete({
+    const tx = await prisma.transaction.findUnique({
       where: { id, userId: prismaUser.id },
+      select: { tipo: true, monto: true, accountId: true },
     })
+    if (!tx) return { success: false, error: 'Transacción no encontrada' }
+
+    const revert =
+      tx.tipo === 'INCOME' ? -tx.monto : tx.tipo === 'EXPENSE' ? tx.monto : 0
+
+    await prisma.$transaction(async (prismaTx) => {
+      await prismaTx.transaction.delete({ where: { id } })
+      if (revert !== 0) {
+        await prismaTx.account.update({
+          where: { id: tx.accountId },
+          data: { balance: { increment: revert } },
+        })
+      }
+    })
+
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: 'Error al deshacer la transacción' }
+    return { success: false, error: 'Error al eliminar la transacción' }
   }
 }
