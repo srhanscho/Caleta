@@ -91,8 +91,7 @@ export async function extractTransaction(
     })
 
     return { success: true, data: transaction }
-  } catch (err) {
-    console.error('[extractTransaction]', err)
+  } catch {
     return { success: false, error: 'Error al analizar la imagen. Intenta de nuevo.' }
   }
 }
