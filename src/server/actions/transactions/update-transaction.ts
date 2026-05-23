@@ -35,6 +35,16 @@ export async function updateTransaction(
 
   if (input.monto <= 0) return { success: false, error: 'El monto debe ser mayor a 0' }
 
+  const account = await prisma.account.findFirst({
+    where: { id: input.accountId, userId: prismaUser.id },
+  })
+  if (!account) return { success: false, error: 'Cuenta no encontrada' }
+
+  const category = await prisma.category.findFirst({
+    where: { id: input.categoryId, OR: [{ userId: prismaUser.id }, { userId: null }] },
+  })
+  if (!category) return { success: false, error: 'Categoría no encontrada' }
+
   try {
     const old = await prisma.transaction.findUnique({
       where: { id, userId: prismaUser.id },
@@ -47,17 +57,27 @@ export async function updateTransaction(
     const newDelta = delta(input.tipo, newMontoCentavos)
 
     const transaction = await prisma.$transaction(async (tx) => {
-      if (oldDelta !== 0) {
-        await tx.account.update({
-          where: { id: old.accountId },
-          data: { balance: { increment: -oldDelta } },
-        })
-      }
-      if (newDelta !== 0) {
-        await tx.account.update({
-          where: { id: input.accountId },
-          data: { balance: { increment: newDelta } },
-        })
+      if (old.accountId === input.accountId) {
+        const netDelta = newDelta - oldDelta
+        if (netDelta !== 0) {
+          await tx.account.update({
+            where: { id: old.accountId },
+            data: { balance: { increment: netDelta } },
+          })
+        }
+      } else {
+        if (oldDelta !== 0) {
+          await tx.account.update({
+            where: { id: old.accountId },
+            data: { balance: { increment: -oldDelta } },
+          })
+        }
+        if (newDelta !== 0) {
+          await tx.account.update({
+            where: { id: input.accountId },
+            data: { balance: { increment: newDelta } },
+          })
+        }
       }
       return tx.transaction.update({
         where: { id },

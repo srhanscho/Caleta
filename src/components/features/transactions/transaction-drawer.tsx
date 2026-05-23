@@ -56,7 +56,7 @@ export function TransactionDrawer({
   )
   const [descripcion, setDescripcion] = useState(transaction?.descripcion ?? '')
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const [, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
   const filteredCategories = categories.filter(
     (c) => c.tipo === (tipo === 'INCOME' ? 'INCOME' : 'EXPENSE')
@@ -222,9 +222,10 @@ export function TransactionDrawer({
           <button
             type="button"
             onClick={handleSave}
-            className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground"
+            disabled={isPending}
+            className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
-            Guardar
+            {isPending ? 'Guardando...' : 'Guardar'}
           </button>
 
           {/* Eliminar — modo edición */}
@@ -247,9 +248,10 @@ export function TransactionDrawer({
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="flex-1 rounded-xl bg-destructive py-3 text-sm font-semibold text-destructive-foreground"
+                  disabled={isPending}
+                  className="flex-1 rounded-xl bg-destructive py-3 text-sm font-semibold text-destructive-foreground disabled:opacity-50"
                 >
-                  Sí, eliminar
+                  {isPending ? 'Eliminando...' : 'Sí, eliminar'}
                 </button>
                 <button
                   type="button"

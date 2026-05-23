@@ -28,6 +28,16 @@ export async function createTransaction(
 
   if (input.monto <= 0) return { success: false, error: 'El monto debe ser mayor a 0' }
 
+  const account = await prisma.account.findFirst({
+    where: { id: input.accountId, userId: prismaUser.id },
+  })
+  if (!account) return { success: false, error: 'Cuenta no encontrada' }
+
+  const category = await prisma.category.findFirst({
+    where: { id: input.categoryId, OR: [{ userId: prismaUser.id }, { userId: null }] },
+  })
+  if (!category) return { success: false, error: 'Categoría no encontrada' }
+
   const montoCentavos = Math.round(input.monto * 100)
   const balanceDelta =
     input.tipo === 'INCOME' ? montoCentavos : input.tipo === 'EXPENSE' ? -montoCentavos : 0
