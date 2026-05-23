@@ -14,7 +14,7 @@ const tabs = [
 type Tab = (typeof tabs)[number]
 
 function NavTab({ label, icon: Icon, href, isActive }: Tab & { isActive: boolean }) {
-  const isPlaceholder = href !== '/dashboard'
+  const isPlaceholder = href !== '/dashboard' && href !== '/transacciones'
 
   if (isPlaceholder) {
     return (
