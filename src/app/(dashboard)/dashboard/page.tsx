@@ -61,16 +61,17 @@ export default async function DashboardPage() {
   const monthlyIncome = incomeAgg._sum.monto ?? 0
   const monthlyExpenses = expensesAgg._sum.monto ?? 0
 
-  const daysInMonth = endOfMonth.getDate()
+  const today = now.getDate()
   const dailyTotals = new Map<number, number>()
   for (const tx of expenseTxs) {
     const day = tx.fecha.getDate()
     dailyTotals.set(day, (dailyTotals.get(day) ?? 0) + tx.monto)
   }
-  const chartData = Array.from({ length: daysInMonth }, (_, i) => ({
-    day: i + 1,
-    total: dailyTotals.get(i + 1) ?? 0,
-  }))
+  let running = 0
+  const chartData = Array.from({ length: today }, (_, i) => {
+    running += dailyTotals.get(i + 1) ?? 0
+    return { day: i + 1, total: running }
+  })
 
   const monthLabel = now.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })
   const userInitial = (prismaUser.name ?? prismaUser.email).charAt(0).toUpperCase()

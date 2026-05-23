@@ -56,6 +56,14 @@ export function TransactionList({ transactions, accounts, categories }: Props) {
         <ul className="space-y-2">
           {transactions.map((tx) => {
             const isIncome = tx.tipo === 'INCOME'
+            const isTransfer = tx.tipo === 'TRANSFER'
+            const amountPrefix = isIncome ? '+' : isTransfer ? '↔' : '-'
+            const amountClass = isIncome
+              ? ''
+              : isTransfer
+              ? 'text-muted-foreground'
+              : 'text-destructive'
+            const amountStyle = isIncome ? { color: '#22C55E' } : undefined
             return (
               <li key={tx.id}>
                 <button
@@ -81,12 +89,10 @@ export function TransactionList({ transactions, accounts, categories }: Props) {
                     </span>
                   </div>
                   <span
-                    className={`text-sm font-medium shrink-0 ${
-                      isIncome ? '' : 'text-destructive'
-                    }`}
-                    style={isIncome ? { color: '#22C55E' } : undefined}
+                    className={`text-sm font-medium shrink-0 ${amountClass}`}
+                    style={amountStyle}
                   >
-                    {isIncome ? '+' : '-'}
+                    {amountPrefix}
                     {formatCOP(Math.abs(tx.monto))}
                   </span>
                 </button>

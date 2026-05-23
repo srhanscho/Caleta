@@ -29,7 +29,8 @@ export function RecentTransactions({ transactions }: Props) {
       <ul className="space-y-3">
         {transactions.map((tx) => {
           const isIncome = tx.tipo === 'INCOME'
-          const sign = isIncome ? '+' : '-'
+          const isTransfer = tx.tipo === 'TRANSFER'
+          const sign = isIncome ? '+' : isTransfer ? '↔' : '-'
           const amountColor = isIncome ? '#22C55E' : undefined
 
           return (
@@ -50,7 +51,7 @@ export function RecentTransactions({ transactions }: Props) {
                 </span>
               </div>
               <span
-                className={`text-sm font-medium shrink-0 ${isIncome ? '' : 'text-destructive'}`}
+                className={`text-sm font-medium shrink-0 ${isIncome ? '' : isTransfer ? 'text-muted-foreground' : 'text-destructive'}`}
                 style={isIncome ? { color: '#22C55E' } : undefined}
               >
                 {sign}{formatCOP(Math.abs(tx.monto))}
