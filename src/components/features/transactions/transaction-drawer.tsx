@@ -2,10 +2,12 @@
 
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
+import { Loader2, Sparkles } from 'lucide-react'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { createTransaction } from '@/server/actions/transactions/create-transaction'
 import { updateTransaction } from '@/server/actions/transactions/update-transaction'
 import { deleteTransaction } from '@/server/actions/transactions/extract-transaction'
+import { suggestCategory } from '@/server/actions/transactions/suggest-category'
 import type { TransactionModel, CategoryModel, AccountModel, TransactionType } from '@/generated/prisma'
 
 export type TransactionWithRefs = TransactionModel & {
@@ -15,6 +17,8 @@ export type TransactionWithRefs = TransactionModel & {
 
 type AccountOption = { id: string; nombre: string; tipo: string; color: string }
 type CategoryOption = { id: string; nombre: string; tipo: string }
+
+type SuggestionState = 'idle' | 'loading' | { categoryId: string; nombre: string }
 
 type Props = {
   open: boolean
@@ -57,6 +61,7 @@ export function TransactionDrawer({
   const [descripcion, setDescripcion] = useState(transaction?.descripcion ?? '')
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [suggestion, setSuggestion] = useState<SuggestionState>('idle')
 
   const filteredCategories = categories.filter(
     (c) => c.tipo === (tipo === 'INCOME' ? 'INCOME' : 'EXPENSE')
@@ -67,6 +72,32 @@ export function TransactionDrawer({
     const newFilter = newTipo === 'INCOME' ? 'INCOME' : 'EXPENSE'
     const current = categories.find((c) => c.id === categoryId)
     if (current && current.tipo !== newFilter) setCategoryId('')
+    setSuggestion('idle')
+  }
+
+  function handleSuggest() {
+    if (!descripcion.trim() || tipo === 'TRANSFER') return
+    setSuggestion('loading')
+    startTransition(async () => {
+      const result = await suggestCategory(descripcion, tipo)
+      if (result.success) {
+        setSuggestion(result.data)
+      } else {
+        setSuggestion('idle')
+        toast.error(result.error)
+      }
+    })
+  }
+
+  function handleDescripcionBlur() {
+    if (descripcion.trim() && !categoryId && tipo !== 'TRANSFER' && suggestion === 'idle') {
+      handleSuggest()
+    }
+  }
+
+  function acceptSuggestion(s: { categoryId: string; nombre: string }) {
+    setCategoryId(s.categoryId)
+    setSuggestion('idle')
   }
 
   function handleClose() {
@@ -176,11 +207,29 @@ export function TransactionDrawer({
           </div>
 
           {/* Categoría */}
-          <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">Categoría</label>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs text-muted-foreground">Categoría</label>
+              {tipo !== 'TRANSFER' && descripcion.trim() && (
+                <button
+                  type="button"
+                  onClick={handleSuggest}
+                  disabled={suggestion === 'loading' || isPending}
+                  className="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-primary disabled:opacity-50"
+                >
+                  {suggestion === 'loading' ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3 w-3" />
+                  )}
+                  Sugerir
+                </button>
+              )}
+            </div>
+
             <select
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={(e) => { setCategoryId(e.target.value); setSuggestion('idle') }}
               className="w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="">Selecciona una categoría</option>
@@ -190,6 +239,29 @@ export function TransactionDrawer({
                 </option>
               ))}
             </select>
+
+            {typeof suggestion === 'object' && (
+              <div className="flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 px-3 py-2">
+                <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary" />
+                <span className="flex-1 text-xs text-foreground">
+                  ¿Es <span className="font-semibold">{suggestion.nombre}</span>?
+                </span>
+                <button
+                  type="button"
+                  onClick={() => acceptSuggestion(suggestion)}
+                  className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground"
+                >
+                  Sí
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSuggestion('idle')}
+                  className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground"
+                >
+                  No
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Fecha */}
@@ -212,6 +284,7 @@ export function TransactionDrawer({
               type="text"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
+              onBlur={handleDescripcionBlur}
               maxLength={120}
               placeholder="¿En qué gastaste?"
               className="w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
